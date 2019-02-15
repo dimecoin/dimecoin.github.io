@@ -1,0 +1,881 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title id="title">Core Wars</title>
+		
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+		<script src="corewars.js"></script>
+		<script src="memory.js"></script>
+		<script src="cpu.js"></script>
+		<script src="assembler.js"></script>
+		<script src="simulator.js"></script>
+		<script src="controller.js"></script>
+		<script src="programs.js"></script>
+		<link rel="stylesheet" href="style.css">
+	</head>
+<body>
+
+<script>
+
+	$( document ).ready(function() {
+
+		// handler to open codes window
+		$('a[rel*=external]').click(function(){
+			window.open($(this).attr('href'));
+			return false; 
+		});
+
+		// setup default values based on simulator, etc
+		$("#button_runsim").prop("disabled",false);
+		$("#button_step").prop("disabled",false);
+
+		$("#currentcpuspeed").html(sim.cpuSpeed);
+
+		$("#memoryof0").val(cpu0.of);
+		$("#memoryof1").val(cpu1.of);
+
+		$("#version").html(version);
+
+		programs.init();
+		sim.init();
+	});
+
+</script>
+
+<!-- table contriner -->
+<div class="container"> 
+
+<table id="tablecpu0">
+	<caption class="player1">CPU0</caption>
+	<tr> <td>status</td><td id="cpu0status"></td> </tr>
+	<tr> <td>R0</td><td id="cpu0R0"></td> </tr>
+	<tr> <td>R1</td><td id="cpu0R1"></td> </tr>
+	<tr> <td>R2</td><td id="cpu0R2"></td> </tr>
+	<tr> <td>R3</td><td id="cpu0R3"></td> </tr>
+	<tr> <td>R4</td><td id="cpu0R4"></td> </tr>
+	<tr> <td>R5</td><td id="cpu0R5"></td> </tr>
+	<tr> <td>R6</td><td id="cpu0R6"></td> </tr>
+	<tr> <td>R7</td><td id="cpu0R7"></td> </tr>
+	<tr> <td>R8</td><td id="cpu0R8"></td> </tr>
+	<tr> <td>R9</td><td id="cpu0R9"></td> </tr>
+	<tr> <td>RA</td><td id="cpu0RA"></td> </tr>
+	<tr> <td>RB</td><td id="cpu0RB"></td> </tr>
+	<tr> <td>RC</td><td id="cpu0RC"></td> </tr>
+	<tr> <td>RD</td><td id="cpu0RD"></td> </tr>
+	<tr> <td>RE</td><td id="cpu0RE"></td> </tr>
+	<tr> <td>RF</td><td id="cpu0RF"></td> </tr>
+
+	<tr> <td>PPC</td><td id="cpu0PPC"></td> </tr>
+	<tr> <td>PC</td><td id="cpu0PC"></td> </tr>
+	<tr> <td>IR</td><td id="cpu0IR"></td> </tr>
+	<tr> <td>OF</td><td id="cpu0OF"></td> </tr>
+	<tr> <td>RM</td><td id="cpu0RM"></td> </tr>
+</table>
+
+
+<table id="memoryTable" width="50%">
+	<caption>Memory</caption>
+	<tr>
+		<td></td>
+		<th scope="col">0..</th>
+		<th scope="col">1..</th>
+		<th scope="col">2..</th>
+		<th scope="col">3..</th>
+		<th scope="col">4..</th>
+		<th scope="col">5..</th>
+		<th scope="col">6..</th>
+		<th scope="col">7..</th>
+		<th scope="col">8..</th>
+		<th scope="col">9..</th>
+		<th scope="col">A..</th>
+		<th scope="col">B..</th>
+		<th scope="col">C..</th>
+		<th scope="col">D..</th>
+		<th scope="col">E..</th>
+		<th scope="col">F..</th>
+	</tr>
+
+	<tr>
+		<th scope="row">0</th>
+		<td id="00"></td>
+		<td id="01"></td>
+		<td id="02"></td>
+		<td id="03"></td>
+		<td id="04"></td>
+		<td id="05"></td>
+		<td id="06"></td>
+		<td id="07"></td>
+		<td id="08"></td>
+		<td id="09"></td>
+		<td id="0A"></td>
+		<td id="0B"></td>
+		<td id="0C"></td>
+		<td id="0D"></td>
+		<td id="0E"></td>
+		<td id="0F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">1</th>
+		<td id="10"></td>
+		<td id="11"></td>
+		<td id="12"></td>
+		<td id="13"></td>
+		<td id="14"></td>
+		<td id="15"></td>
+		<td id="16"></td>
+		<td id="17"></td>
+		<td id="18"></td>
+		<td id="19"></td>
+		<td id="1A"></td>
+		<td id="1B"></td>
+		<td id="1C"></td>
+		<td id="1D"></td>
+		<td id="1E"></td>
+		<td id="1F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">2</th>
+		<td id="20"></td>
+		<td id="21"></td>
+		<td id="22"></td>
+		<td id="23"></td>
+		<td id="24"></td>
+		<td id="25"></td>
+		<td id="26"></td>
+		<td id="27"></td>
+		<td id="28"></td>
+		<td id="29"></td>
+		<td id="2A"></td>
+		<td id="2B"></td>
+		<td id="2C"></td>
+		<td id="2D"></td>
+		<td id="2E"></td>
+		<td id="2F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">3</th>
+		<td id="30"></td>
+		<td id="31"></td>
+		<td id="32"></td>
+		<td id="33"></td>
+		<td id="34"></td>
+		<td id="35"></td>
+		<td id="36"></td>
+		<td id="37"></td>
+		<td id="38"></td>
+		<td id="39"></td>
+		<td id="3A"></td>
+		<td id="3B"></td>
+		<td id="3C"></td>
+		<td id="3D"></td>
+		<td id="3E"></td>
+		<td id="3F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">4</th>
+		<td id="40"></td>
+		<td id="41"></td>
+		<td id="42"></td>
+		<td id="43"></td>
+		<td id="44"></td>
+		<td id="45"></td>
+		<td id="46"></td>
+		<td id="47"></td>
+		<td id="48"></td>
+		<td id="49"></td>
+		<td id="4A"></td>
+		<td id="4B"></td>
+		<td id="4C"></td>
+		<td id="4D"></td>
+		<td id="4E"></td>
+		<td id="4F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">5</th>
+		<td id="50"></td>
+		<td id="51"></td>
+		<td id="52"></td>
+		<td id="53"></td>
+		<td id="54"></td>
+		<td id="55"></td>
+		<td id="56"></td>
+		<td id="57"></td>
+		<td id="58"></td>
+		<td id="59"></td>
+		<td id="5A"></td>
+		<td id="5B"></td>
+		<td id="5C"></td>
+		<td id="5D"></td>
+		<td id="5E"></td>
+		<td id="5F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">6</th>
+		<td id="60"></td>
+		<td id="61"></td>
+		<td id="62"></td>
+		<td id="63"></td>
+		<td id="64"></td>
+		<td id="65"></td>
+		<td id="66"></td>
+		<td id="67"></td>
+		<td id="68"></td>
+		<td id="69"></td>
+		<td id="6A"></td>
+		<td id="6B"></td>
+		<td id="6C"></td>
+		<td id="6D"></td>
+		<td id="6E"></td>
+		<td id="6F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">7</th>
+		<td id="70"></td>
+		<td id="71"></td>
+		<td id="72"></td>
+		<td id="73"></td>
+		<td id="74"></td>
+		<td id="75"></td>
+		<td id="76"></td>
+		<td id="77"></td>
+		<td id="78"></td>
+		<td id="79"></td>
+		<td id="7A"></td>
+		<td id="7B"></td>
+		<td id="7C"></td>
+		<td id="7D"></td>
+		<td id="7E"></td>
+		<td id="7F"></td>
+	</tr>
+
+	<tr>
+		<th scope="row">8</th>
+		<td id="80"></td>
+		<td id="81"></td>
+		<td id="82"></td>
+		<td id="83"></td>
+		<td id="84"></td>
+		<td id="85"></td>
+		<td id="86"></td>
+		<td id="87"></td>
+		<td id="88"></td>
+		<td id="89"></td>
+		<td id="8A"></td>
+		<td id="8B"></td>
+		<td id="8C"></td>
+		<td id="8D"></td>
+		<td id="8E"></td>
+		<td id="8F"></td>
+	</tr>
+	<tr>
+		<th scope="row">9</th>
+		<td id="90"></td>
+		<td id="91"></td>
+		<td id="92"></td>
+		<td id="93"></td>
+		<td id="94"></td>
+		<td id="95"></td>
+		<td id="96"></td>
+		<td id="97"></td>
+		<td id="98"></td>
+		<td id="99"></td>
+		<td id="9A"></td>
+		<td id="9B"></td>
+		<td id="9C"></td>
+		<td id="9D"></td>
+		<td id="9E"></td>
+		<td id="9F"></td>
+	</tr>
+	<tr>
+		<th scope="row">A</th>
+		<td id="A0"></td>
+		<td id="A1"></td>
+		<td id="A2"></td>
+		<td id="A3"></td>
+		<td id="A4"></td>
+		<td id="A5"></td>
+		<td id="A6"></td>
+		<td id="A7"></td>
+		<td id="A8"></td>
+		<td id="A9"></td>
+		<td id="AA"></td>
+		<td id="AB"></td>
+		<td id="AC"></td>
+		<td id="AD"></td>
+		<td id="AE"></td>
+		<td id="AF"></td>
+	</tr>
+	<tr>
+		<th scope="row">B</th>
+		<td id="B0"></td>
+		<td id="B1"></td>
+		<td id="B2"></td>
+		<td id="B3"></td>
+		<td id="B4"></td>
+		<td id="B5"></td>
+		<td id="B6"></td>
+		<td id="B7"></td>
+		<td id="B8"></td>
+		<td id="B9"></td>
+		<td id="BA"></td>
+		<td id="BB"></td>
+		<td id="BC"></td>
+		<td id="BD"></td>
+		<td id="BE"></td>
+		<td id="BF"></td>
+	</tr>
+	<tr>
+		<th scope="row">C</th>
+		<td id="C0"></td>
+		<td id="C1"></td>
+		<td id="C2"></td>
+		<td id="C3"></td>
+		<td id="C4"></td>
+		<td id="C5"></td>
+		<td id="C6"></td>
+		<td id="C7"></td>
+		<td id="C8"></td>
+		<td id="C9"></td>
+		<td id="CA"></td>
+		<td id="CB"></td>
+		<td id="CC"></td>
+		<td id="CD"></td>
+		<td id="CE"></td>
+		<td id="CF"></td>
+	</tr>
+	<tr>
+		<th scope="row">D</th>
+		<td id="D0"></td>
+		<td id="D1"></td>
+		<td id="D2"></td>
+		<td id="D3"></td>
+		<td id="D4"></td>
+		<td id="D5"></td>
+		<td id="D6"></td>
+		<td id="D7"></td>
+		<td id="D8"></td>
+		<td id="D9"></td>
+		<td id="DA"></td>
+		<td id="DB"></td>
+		<td id="DC"></td>
+		<td id="DD"></td>
+		<td id="DE"></td>
+		<td id="DF"></td>
+	</tr>
+	<tr>
+		<th scope="row">E</th>
+		<td id="E0"></td>
+		<td id="E1"></td>
+		<td id="E2"></td>
+		<td id="E3"></td>
+		<td id="E4"></td>
+		<td id="E5"></td>
+		<td id="E6"></td>
+		<td id="E7"></td>
+		<td id="E8"></td>
+		<td id="E9"></td>
+		<td id="EA"></td>
+		<td id="EB"></td>
+		<td id="EC"></td>
+		<td id="ED"></td>
+		<td id="EE"></td>
+		<td id="EF"></td>
+	</tr>
+	<tr>
+		<th scope="row">F</th>
+		<td id="F0"></td>
+		<td id="F1"></td>
+		<td id="F2"></td>
+		<td id="F3"></td>
+		<td id="F4"></td>
+		<td id="F5"></td>
+		<td id="F6"></td>
+		<td id="F7"></td>
+		<td id="F8"></td>
+		<td id="F9"></td>
+		<td id="FA"></td>
+		<td id="FB"></td>
+		<td id="FC"></td>
+		<td id="FD"></td>
+		<td id="FE"></td>
+		<td id="FF"></td>
+	</tr>
+
+</table>
+
+<table id="tablecpu1">
+	<caption class="player2">CPU1</caption>
+	<tr> <td>status</td><td id="cpu1status"></td> </tr>
+	<tr> <td>R0</td><td id="cpu1R0"></td> </tr>
+	<tr> <td>R1</td><td id="cpu1R1"></td> </tr>
+	<tr> <td>R2</td><td id="cpu1R2"></td> </tr>
+	<tr> <td>R3</td><td id="cpu1R3"></td> </tr>
+	<tr> <td>R4</td><td id="cpu1R4"></td> </tr>
+	<tr> <td>R5</td><td id="cpu1R5"></td> </tr>
+	<tr> <td>R6</td><td id="cpu1R6"></td> </tr>
+	<tr> <td>R7</td><td id="cpu1R7"></td> </tr>
+	<tr> <td>R8</td><td id="cpu1R8"></td> </tr>
+	<tr> <td>R9</td><td id="cpu1R9"></td> </tr>
+	<tr> <td>RA</td><td id="cpu1RA"></td> </tr>
+	<tr> <td>RB</td><td id="cpu1RB"></td> </tr>
+	<tr> <td>RC</td><td id="cpu1RC"></td> </tr>
+	<tr> <td>RD</td><td id="cpu1RD"></td> </tr>
+	<tr> <td>RE</td><td id="cpu1RE"></td> </tr>
+	<tr> <td>RF</td><td id="cpu1RF"></td> </tr>
+
+	<tr> <td>PPC</td><td id="cpu1PPC"></td> </tr>
+	<tr> <td>PC</td><td id="cpu1PC"></td> </tr>
+	<tr> <td>IR</td><td id="cpu1IR"></td> </tr>
+	<tr> <td>OF</td><td id="cpu1OF"></td> </tr>
+	<tr> <td>RM</td><td id="cpu1RM"></td> </tr>
+</table>
+
+</div>
+
+<div id="controls" class="container">
+
+<table id="tablecpu0controls">
+	<caption class="player1">Player 1</caption>
+	<tr>
+		<td valign="top"><textarea id="program0input" rows="25" cols="50"></textarea></td>
+
+		<td valign="top">
+			<button id="load0" onclick="window.buttonClick(this.id);">Reload Program</button> <br>
+
+			<div class="memorysettings">
+				Memory Offset: <input id="memoryof0" size="4" type="number" value="0"><br>
+				Memory Addressing: <br>
+				<input type="radio" name="mm0" value ="real">Real 
+				<input type="radio" name="mm0" value ="rela" checked>Relative<br>
+				<button id="button_memoryof0" onclick="window.buttonClick(this.id);">Set</button>
+			</div>
+
+			<br>
+			<button id="button_resetcpu0" onclick="window.buttonClick(this.id);">Reset CPU</button>
+			<hr>Instructions Executed: <div style="display: inline;" id="cpu0currentstep"></div><hr>
+			<hr>
+			Load program:<br>
+			<select id="cpu0programs"> </select>
+			<button id="button_pload0" onclick="window.buttonClick(this.id);">Load</button>
+
+		</td>	
+	</tr>
+	<tr>
+		<td colspan=2> <textarea id="program0output" rows="10" cols="80"></textarea> </td>
+	</tr>
+</table>
+
+<table id="globalControls">
+	<caption>Global Controls</caption>
+	<tr>
+		<td>
+			Instructions Executed: <div style="display: inline;" id="currentstep"></div>
+			<hr>
+			<button id="button_runsim" onclick="window.buttonClick(this.id);">Run Simulation</button>
+			<button id="button_resetall" onclick="window.buttonClick(this.id);">Reset/Reload All</button>
+		</td>	
+	</tr>
+	<tr>
+		<td>
+			Current Step Speed:<div style="display: inline;" id="currentcpuspeed"></div> (in ms)
+		</td>
+	</tr>
+	<tr>
+		<td style="display: inline;white-space:nowrap;">
+			Step Speed: <input id="cpuspeed" size="4" type="number" value="250">
+			<button id="button_cpuspeed" onclick="window.buttonClick(this.id);">Set</button>
+		</td>	
+	</tr>
+	<tr>
+		<td>
+			<button id="button_step" onclick="window.buttonClick(this.id);">step</button>
+			<button id="button_break" onclick="window.buttonClick(this.id);">break</button>
+		</td>	
+	</tr>
+	<tr>
+	</tr>
+	<tr>
+		<td>
+			<button id="button_resetcpus" onclick="window.buttonClick(this.id);">Reset CPUS</button>
+			<button id="button_clearmemory" onclick="window.buttonClick(this.id);">Clear Memory</button>
+		</td>	
+	</tr>
+
+
+	<tr align="center">
+		<td>
+			<strong>Version: </strong><div id="version" style="display: inline;"></div> 
+			<br>
+			(<i><a href="https://github.com/dimecoin/CoreWars">source code</a></i>)
+			[<a href="codes.html" rel="external">Instruction Set</a>]
+		</td>	
+	</tr>
+
+
+</table>
+
+<table id="tablecpu1controls">
+
+	<caption class="player2">Player 2</caption>
+
+	<tr>
+	<td valign="top"><textarea id="program1input" rows="25" cols="50"></textarea></td>
+	<td valign="top">
+			<button id="load1" onclick="window.buttonClick(this.id);">Reload Program</button><br>
+
+			<div class="memorysettings">
+				Memory Offset: <input id="memoryof1" size="4" type="number" value="0">
+				Memory Addressing: <br>
+				<input type="radio" name="mm1" value ="real">Real 
+				<input type="radio" name="mm1" value ="rela" checked>Relative<br>
+				<button id="button_memoryof1" onclick="window.buttonClick(this.id);">Set</button>
+			</div>
+			<br>
+			<button id="button_resetcpu1" onclick="window.buttonClick(this.id);">Reset CPU</button>
+			<hr>Instructions Executed: <div style="display: inline;" id="cpu1currentstep"></div>
+			<br>
+			<button id="disablecpu1" onclick="window.buttonClick(this.id);">Enable/Disable CPU</button>
+			<hr>
+			Load program:<br>
+			<select id="cpu1programs"> </select>
+			<button id="button_pload1" onclick="window.buttonClick(this.id);">Load</button>
+	</td>	
+	</tr>
+	<tr>
+		<td colspan=2> <textarea id="program1output" rows="10" cols="80"></textarea> </td>
+	</tr>
+</table>
+
+
+
+</div>
+
+</body>
+</html>
+
+
+<!-- here is our program code, lol -->
+<textarea id="program_bot_slowpoke" style="display:none;">
+;; Slow Poke
+; slowest bomb in the world.
+; fills in each memory location 1 after another
+; start at end of its own program memory.
+load R4,0xFF ; load the bomb
+load R1,0x01 ; load our increment
+load R2,0x0b ; load our starting location.
+Main:
+	addi R2,R2,R1 ; add 1 to location
+	store R4,[R2] ; send bomb to location.
+jmp Main
+</textarea>
+
+<textarea id="program_loop" style="display:none;">
+; basic loop, smallest non-terminating program.
+Main: jmp Main
+</textarea>
+
+<textarea id="program_test_load" style="display:none;">
+;; Load command test.
+
+load R1,[0x06] ; load memory
+load R4,0xC0 ; load imm
+load R5, test ; load from label
+test:
+halt
+</textarea>
+
+<textarea id="program_test_junk" style="display:none;">
+;; Test - random instructions for testing.
+
+load R1,[0x02] ; load memory
+load R4,0xFF ; load imm
+store R4, [0x80]
+move R9,R4
+; test
+addi RA,R1,R1
+or RB, RA, RB
+and RC, RB, R4
+
+xor RD, RB, R4
+
+move RE, RD
+ror RE,3
+ror RE,7
+ror RE,13
+jmpEQ R5=R0,0x02
+halt
+</textarea>
+
+<textarea id="program_test_offset" style="display:none;">
+;; Offset test.
+;; testing memory offets (real and relative)
+START:
+
+load R4,0XFF
+store R4, [0x10]
+
+load R5, [0x10]
+
+jmp START
+</textarea>
+
+<textarea id="program_test_d" style="display:none;">
+;; random testing, changes a lot
+load R1,[0x02]
+load R4,0xFF
+</textarea>
+
+<textarea id="program_bot_randomattack" style="display:none;">
+;; Random Attack
+;; Randomly attacks a memory location on board
+;; Does NOT have logic to not attack ourselves, 
+
+;; (not random, but close enough)
+
+load R4,0xFF ; load the bomb into R4
+
+load R0, 0x0D
+load R5,0x00 ; load our starting location (for attack, not of our self)
+
+load R7, 0x1 ;; Increment by this.
+
+Main:
+
+	ror R5, 3 ; rotate right by n positions
+	xor R5,R5,R7 ; R5=R5^R6
+	
+
+	addi R5,R5,R7
+
+	load R0, 0x10
+	jmpEQ R5=R0, mungle
+
+	load R0, 0x0D
+	jmpEQ R5=R0, mungle
+
+	load R0, 0x12
+	jmpEQ R5=R0, mungle
+
+	
+	store R4,[R5]
+		
+jmp Main 
+
+mungle:
+	ror R7, 5
+jmp Main
+</textarea>
+
+<textarea id="program_test_managler" style="display:none;">
+;; Syntax Managler/Tester 
+;; This is a good test of the parser/assembler
+;; makes things hard as possiable.
+
+start:
+load R1,1
+         load    R2,2
+load R3, 0x3
+load R4, 00000100b
+load 	R5	,	5
+load R6,6;;test
+load   R7 , 7
+    load R8,     8
+	load	r9	,	9
+load RA,10
+starttwo: load RB, 11
+starthree:	load 	RC,    12
+load rd, 0x0d
+load re, e
+load rf, 15
+load r1, 00000001b
+
+jmp start ;;jmp
+</textarea>
+
+<textarea id="program_test_jumper" style="display:none;">
+;; Jmp tests
+start:
+load R1,1
+two: load R2, 2
+
+jmp two
+</textarea>
+
+<textarea id="program_bot_randomattack2" style="display:none;">
+;; Random Attack
+;; Randomly attacks a memory location on board
+;; Does NOT have logic to not attack ourselves, 
+
+;; (not random, but close enough)
+
+load R4,0xFF ; load the bomb into R4
+
+load R0, 0x0D
+load R5,0x00 ; load our starting location (for attack, not of our self)
+
+load R7, 0x1 ;; Increment by this.
+
+Main:
+
+	ror R5, 3 ; rotate right by n positions
+	xor R5,R5,R7 ; R5=R5^R6
+	
+
+	addi R5,R5,R7
+
+	load R0, 0x10
+	jmpEQ R5=R0, mungle
+
+	load R0, 0x0D
+	jmpEQ R5=R0, mungle
+
+	load R0, 0x12
+	jmpEQ R5=R0, mungle
+
+	
+	store R4,[R5]
+		
+jmp Main 
+
+mungle:
+	ror R7, 5
+jmp Main
+</textarea>
+
+<textarea id="program_bot_aggrobot3" style="display:none;">
+;; Aggro Bot.
+;; "Everyone has a plan until they get punched in the face" -- Mike Tyson.
+
+;; NOTE: ** This was a competition winning bot. **
+;; NOTE: This assumes starting location of 0x08 and using real addressing.
+
+
+;; This is a very aggressive bot (even though it looks overly simple to write)
+;; Not a lot of startup code, so it comes out swinging very soon (on second instruction), while other bots are most likely still loading registers!
+;; No condition or housekeeping code, so 1 instruction = 1 swing.  Can't swing faster than that!  
+;; Most other bots are going to be burning 2 or 3 instructions per swing.
+;; We have fairly large foot print, this has a counter intutive way of reducing size of space we need to attack!
+
+;; For defense:
+;; Best defense is a good offense.
+;; Code has no loops, so attacks have to land in front of our current PC location.
+;; If you hit our backside, that code won't get executaed again (unlike a program that loop).
+
+;; If you hit in front of us, it has to be close to our current location.
+;; Think of it this way, if an enemy  hits us 10 instructions ahead, we still have 10 attacks before we die.
+
+
+
+load R4,0xFF ; load the bomb into R4
+
+store R4, [0x98]
+store R4, [0xF8]
+store R4, [0xA2]
+store R4, [0x6C]
+
+store R4, [0xE8]
+store R4, [0xD8]
+store R4, [0xC8]
+store R4, [0x92]
+store R4, [0xB8]
+store R4, [0xA8]
+
+store R4, [0x88]
+store R4, [0x78]
+store R4, [0x68]
+store R4, [0x58]
+;store R4, [0x48]
+
+store R4, [0xF2]
+store R4, [0xE2]
+store R4, [0xD2]
+store R4, [0xC2]
+store R4, [0xB2]
+
+store R4, [0x82]
+store R4, [0x72]
+store R4, [0x62]
+store R4, [0x52]
+;store R4, [0x42]
+
+
+store R4, [0xFC]
+store R4, [0xEC]
+store R4, [0xDC]
+store R4, [0xCC]
+store R4, [0xBC]
+store R4, [0xAC]
+store R4, [0x9C]
+store R4, [0x8C]
+store R4, [0x7C]
+
+store R4, [0x5C]
+;store R4, [0x4C]
+</textarea>
+
+
+<textarea id="program_bot_simplebomb" style="display:none;">
+; This is a simple "linear" bomb.  We start at address X and move forward N steps hoping to hit something.
+
+;; Code tries to be small as possiable to minimize our attack foot print.
+
+;; Our step should be around what we expect "average size" of enemy program to be.  
+;; If we step to much, we could overstep and miss, but if we step to little we waste time and increase our risk.
+
+;; Weakness: One flaw, is we could easily hit ourselves. 
+;; To minimize code size we don't check for this.
+;; If we do hit ourselves, it means we have "reasonable" searched the entire memory space,... and burned a lot of cycles...
+;; So, we will probably be dead anyways, by the time this becomes a problem.
+
+load R4,0xFF ; load the bomb into R4
+
+;; Starting location should be address of were our program ends.
+;; (Most likely, but not sure if instructor would put too programs "back to back", seems unlikely)
+
+;; ( Our Address + Program size) - Step size  : this would be good starting location for R5
+;; we take away step size since we increment location in loop.
+;; TODO: change location when we get our starting location from instructor.
+load R5,0x08 ; load our starting location.
+
+;; Step is the amount of addresses we will jump from current location and bomb.
+;; If step is too small, we will waste a lot of time searching and make us more vunerable to attack.
+;; If step is too big, we will "jump over" the enemies program.
+;; Step should be "best guess" on what we expect attacker programs size to be.
+
+;; Our program size is 11 [x2] bytes and we are (hopefully!) a very tiny program.
+;; Best guess, would be about 11 to 22 for other programs, so let's say 13?
+;; But if they preload data like us, hitting the startup code doesn't win, so let's subtract 3 giving us 10.
+;; (255-11)/10 = 24 steps to bomb the "entire" board, excluding ourself.  Average win will be about ~12 steps 
+;; (3 instructions per step, so roughly 26 instructions for avg win).  
+;; Seems like a lot, but hope that is fast enough before they get us!)
+
+load R6, 0x4 ;; our step.
+;; attack only on even!
+
+Main:
+
+	addi R5, R5, R6 ; Add step (R6) to current location (R5) and store in R5
+	
+	store R4,[R5]  ; Send up the bomb.  Put Bomb (R4) into current location (R5)
+	;; if we could do immediate store we could save 2 bytes, but don't see that supported.
+
+	jmp Main 
+
+
+;; This function sends our bomb then jumps back to Main.
+;; R5 should be set before calling, this is is memory address you want to bomb.
+;; COMMENTED OUT: subfunctions take extra 2 bytes, do it inline.  Keeping for reference.
+;Bomb:
+;	store R4,[R5]
+;	jmp Main
+
+</textarea>
